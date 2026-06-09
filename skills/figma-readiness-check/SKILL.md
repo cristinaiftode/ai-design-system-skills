@@ -1,7 +1,7 @@
 ---
 name: figma-readiness-check
-description: Audit a Figma file (or a specific component within one) against the AI-readable component library readiness checklist — Variables, naming conventions, Component Properties for variants, auto-layout, named layers, state coverage, and description fields. Produces a punch list of issues the designer needs to fix in Figma BEFORE running component generation. Use when bootstrapping a new component library, when a designer is preparing their Figma file for AI handoff, or whenever the user asks to "audit my Figma file", "check Figma readiness", "is my Figma ready for AI", or "find issues in my Figma components". Requires the Figma MCP server.
-trigger: [audit my figma file, check figma readiness, is my figma ready for ai, find issues in my figma components, figma hygiene check, figma component audit]
+description: Audit a Figma file (or a specific component within one) against the AI-readable component library readiness checklist — Variables, naming conventions, Component Properties for variants, auto-layout, named layers, state coverage, description fields, AND a dedicated designer-annotations pass that surfaces text notes left in component / Variable `description` fields (the "Overlay = Trans/Black/30, NOT 50" kind of comment that encodes a design decision nobody copied into code). Produces a punch list of issues the designer needs to fix in Figma BEFORE running component generation, plus a separate "annotations to honor" section that components-from-figma should treat as instructions. Use when bootstrapping a new component library, when a designer is preparing their Figma file for AI handoff, when a component looks subtly off and you suspect a designer note got lost, or whenever the user asks to "audit my Figma file", "check Figma readiness", "is my Figma ready for AI", "find issues in my Figma components", "are there designer notes I missed", or "read Figma annotations". Requires the Figma MCP server.
+trigger: [audit my figma file, check figma readiness, is my figma ready for ai, find issues in my figma components, figma hygiene check, figma component audit, are there designer notes, read figma annotations]
 license: Apache-2.0
 ---
 
@@ -49,6 +49,16 @@ For each component scanned, evaluate:
 ### E. Edge cases
 12. **Is there a long-text example?** Buttons / Tags / Chips with super long labels — does the component handle wrap or truncate gracefully?
 13. **Is there an empty example?** What does a Table look like with no rows? A Dropdown with no options?
+
+### F. Designer annotations (high signal, low cost)
+
+14. **Description fields on components.** Read every component's `description` property via `get_metadata`. Surface every non-empty one — and categorize:
+    - **Design rule** (e.g. `"Use only for primary CTA"`, `"Always pair with an icon"`) — annotation to honor; pass through to `component-from-figma`'s plan step.
+    - **State spec** (e.g. `"Hover = action/secondary/hover, not info/highlight"`) — annotation to encode in the component's CSS / manifest.
+    - **Token override** (e.g. `"Overlay = Trans/Black/30, NOT 50"`) — annotation to verify against the actual Variable value; flag if mismatched.
+    - **Deprecation / TODO** (e.g. `"Will be replaced in Q3"`) — informational.
+15. **Description fields on Variables.** Same scan on Figma Variables. The Variable description is often where the rationale for a value lives ("`#0834C7` not `#0635C0` — tuned darker after the May review") — passing this through to code-side reviewers prevents re-litigating decided design choices.
+16. **Annotation node markers.** Look for nodes named `Note`, `Annotation`, `Spec`, or with the `📌` / `💬` prefix convention. These are often dedicated comment nodes the designer added; surface their text.
 
 ## Workflow
 
@@ -111,8 +121,22 @@ File: [file name] · Scope: [all/top-5/Component] · Date: [date]
 ## Components needing major work
 [list with specific issues]
 
+## Annotations to honor
+
+These are designer-authored notes pulled from the Figma file. They are NOT readiness issues — they are instructions to thread through to the code:
+
+### Component-level annotations (4)
+- **Modal/Default** — `"Overlay must be Trans/Black/30 (not 50). We tested both."` → action: verify `--surface-modal` value (currently `rgba(46,56,77,0.3)`) and bake this into the component's prompt-rules section.
+- **Button/Primary** — `"Hover tuned darker after May review — #0834C7."` → action: confirm `--action-primary-hover` matches.
+- **Tag/Counter** — `"Filled disc, NOT a chip. No border, no padding around digit."` → action: critical instruction for the component-from-figma plan step.
+- **Topbar** — `"Standalone /AI-Prototyping/ uses the full App shell, not a slim custom shell."` → action: do not generate a separate slim shell.
+
+### Variable-level annotations (2)
+- `surface/automation/rest` — `"Deprecated. Do not use in new components."`
+- `text/footerPrimary` — `"Always paired with surface-footer. Don't use elsewhere."`
+
 ## Recommended next step
-Fix the top 3 blockers, then re-run this skill. Once at 80%+ "ready", run `figma-tokens-extract` and start building components.
+Fix the top 3 blockers, then re-run this skill. Once at 80%+ "ready", run `figma-tokens-extract` and start building components. The "annotations to honor" section should be reviewed BEFORE the first `component-from-figma` run — those notes are how the components avoid avoidable re-work.
 ```
 
 ### 5. Offer to write the report to a file

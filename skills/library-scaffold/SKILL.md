@@ -1,7 +1,7 @@
 ---
 name: library-scaffold
 description: Scaffold a brand-new AI-readable component library project from scratch — Vite + React + TypeScript, folder structure (`tokens/`, `components/`, `prototypes/`, `reference/`), placeholder `manifest.json`, `prompt-rules.md`, `CLAUDE.md`, `README.md`, and a minimal `index.html`. The output is an empty but correctly-shaped repo ready for `figma-tokens-extract` and `component-from-figma`. Use when starting a brand-new component library, when bootstrapping the playbook's Phase 3, or whenever the user asks to "scaffold a component library", "start a new library project", "set up a new AI-readable design system", or "initialize a component library".
-trigger: [scaffold a component library, start a new library project, set up a new design system, initialize a component library, bootstrap a component library]
+trigger: [scaffold a component library, start a new library project, set up a new design system, initialize a component library, bootstrap a component library, create a new component library project, fresh start design system, empty folder to library]
 license: Apache-2.0
 ---
 

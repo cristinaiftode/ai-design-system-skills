@@ -1,7 +1,7 @@
 ---
 name: figma-tokens-extract
 description: Extract design tokens (colors, spacing, typography, radii, borders) from a Figma file via the Figma MCP and convert them to CSS custom properties in `tokens/colors.css`, `tokens/spacing.css`, `tokens/typography.css`. Use when bootstrapping a new AI-readable component library, when refreshing tokens after a Figma rebrand, or whenever the user asks to "extract tokens from Figma", "convert Figma variables to CSS", "build my tokens files", "pull design tokens", or "generate tokens.css from Figma". Requires the Figma MCP server to be connected.
-trigger: [extract tokens from figma, convert figma variables to css, build my tokens files, pull design tokens, generate tokens.css from figma, refresh tokens, sync design tokens]
+trigger: [extract tokens from figma, convert figma variables to css, build my tokens files, pull design tokens, generate tokens.css from figma, refresh tokens, sync design tokens, set up tokens, tokens from figma, i need tokens, pull tokens]
 license: Apache-2.0
 ---
 

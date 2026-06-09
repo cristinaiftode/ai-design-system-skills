@@ -1,7 +1,7 @@
 ---
 name: library-lint
-description: Lint a component library project for off-brand drift — hardcoded hex codes instead of CSS variables, Tailwind utility classes, non-Rubik (or non-canonical) font references, inline styles, custom HTML buttons/inputs instead of library components, missing BEM prefixes, and any pattern explicitly banned in `prompt-rules.md`. Returns a structured punch list with file:line references. Use after building components or prototypes, in a pre-commit hook, when auditing an existing project for design-system compliance, or whenever the user asks to "lint the library", "check for off-brand code", "scan for token violations", or "audit the prototypes".
-trigger: [lint the library, check for off-brand code, scan for token violations, audit the prototypes, find hex codes, design system compliance check]
+description: Lint a component library project for off-brand drift — hardcoded hex codes instead of CSS variables, Tailwind utility classes, non-Rubik (or non-canonical) font references, inline styles, custom HTML buttons/inputs instead of library components, missing BEM prefixes, `var(--name)` references to tokens that aren't defined anywhere (the `--spacing-150` silent-evaluates-to-empty bug), and any pattern explicitly banned in `prompt-rules.md`. Returns a structured punch list with file:line references. Use after building components or prototypes, in a pre-commit hook, when auditing an existing project for design-system compliance, or whenever the user asks to "lint the library", "check for off-brand code", "scan for token violations", "audit the library", "audit the prototypes", "compliance check", "is anything off-brand", "design review the code", "check for issues", "scan for design-system violations", "find hex codes", or "are we using the tokens". For demo / prototype folders specifically (where raw `<button>` / `<input>` should be errors not warnings), prefer `demo-compliance-scanner`.
+trigger: [lint the library, check for off-brand code, scan for token violations, audit the library, audit the prototypes, compliance check, is anything off-brand, design review the code, check for issues, scan for design-system violations, find hex codes, are we using the tokens]
 license: Apache-2.0
 ---
 
@@ -36,6 +36,7 @@ Read `prompt-rules.md` first to learn the project's banned patterns. Default che
 | 3 | No inline styles in JSX | grep `style=\{\{` in `components/**/*.tsx` and `prototypes/**/*.tsx` |
 | 4 | No custom `<button>` in prototypes | grep `<button` in prototypes (allowed only inside `components/` source files) |
 | 5 | No banned libraries | grep import lines for libraries listed under "Banned patterns" in `prompt-rules.md` (e.g., styled-components, emotion, @mui/, @chakra-ui/) |
+| 6 | **All `var(--name)` references resolve** | Build the set of defined CSS variables from `tokens/*.css`. Grep `var\(--[a-z0-9-]+\)` across `components/**/*.css`, `prototypes/**/*.{css,html,tsx}`, and `examples/**/*.{tsx,css}`. Every reference must exist in the set. This catches `var(--spacing-150)` / `var(--spacing-250)` typos that silently evaluate to nothing and are invisible until you diff against Figma. Suggest the closest defined token by edit distance for each violation. |
 
 ### Tier 2 — Warnings
 
@@ -132,3 +133,9 @@ A lint report (printed and optionally saved to `./library-lint-report.md`). Plus
 ## Note on accuracy
 
 This is a pattern-matching lint, not a full AST analyzer. False positives happen — hex codes inside SVG `fill=""` attributes for decorative illustrations are OK, hex codes inside CSS variable declarations in `tokens/*.css` are OK. Use judgment when reporting.
+
+## Companion skills
+
+- `demo-compliance-scanner` — stricter scan focused on `prototypes/` + `demos/` + `examples/`, with raw HTML affordances as Tier 1 errors. Use it when you specifically want to audit demo hygiene.
+- `verify-component` — single-component version of this (includes the schema-completeness check that this skill skips).
+- `token-drift-check` — diffs the current `tokens/*.css` against Figma. Pair with this skill to catch *both* "code drifted from tokens" and "tokens drifted from Figma."

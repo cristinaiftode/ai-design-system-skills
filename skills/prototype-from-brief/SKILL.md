@@ -1,7 +1,7 @@
 ---
 name: prototype-from-brief
 description: Build a complete prototype (page, screen, or flow) for an AI-readable component library from a natural-language brief, using only components that exist in `manifest.json` and tokens that exist in `tokens/*.css`. If anything required by the brief is missing from the library, STOP and report the gap before generating — never invent. Output is a standalone HTML or TSX prototype file in `prototypes/`. Use when prototyping a feature using an existing library, when validating that the library is complete enough for a real flow, or whenever the user asks to "build a prototype for [feature]", "make a settings page using our design system", "prototype a [page]", or "create a flow with our components".
-trigger: [build a prototype, make a prototype, create a prototype, prototype this page, build a flow, prototype a feature]
+trigger: [build a prototype, make a prototype, create a prototype, prototype this page, build a flow, prototype a feature, mock up a screen, design a page using our system, build a stakeholder demo]
 license: Apache-2.0
 ---
 

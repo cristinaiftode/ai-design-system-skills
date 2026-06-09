@@ -10,14 +10,25 @@
 set -euo pipefail
 
 SKILLS=(
+  # Tier 1 — Bootstrap
+  library-scaffold
+  figma-readiness-check
   figma-tokens-extract
   codebase-conventions-scan
+
+  # Tier 2 — Component loop
   component-from-figma
-  figma-readiness-check
-  library-lint
+  manifest-styling-from-css
   verify-component
-  library-scaffold
+  showcase-page-generator
+  screenshot-diff
   next-component-to-build
+
+  # Tier 3 — Quality + prototyping
+  library-lint
+  demo-compliance-scanner
+  token-drift-check
+  figma-batch-probe
   prototype-from-brief
 )
 
@@ -53,4 +64,4 @@ echo
 echo "All done. Open a fresh Claude Code session and try:"
 echo "  \"List all skills available to me right now.\""
 echo
-echo "If you don't see the nine design-system skills, restart Claude Code."
+echo "If you don't see the fifteen design-system skills, restart Claude Code."

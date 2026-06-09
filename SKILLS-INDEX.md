@@ -1,6 +1,6 @@
 # Design System Skills — Index
 
-Nine skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
+Fifteen skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
 
 You don't invoke this file directly. It's a reference for which skill to reach for at each phase.
 
@@ -9,7 +9,7 @@ You don't invoke this file directly. It's a reference for which skill to reach f
 | Skill | When | What it produces |
 |---|---|---|
 | `library-scaffold` | Empty folder, Day 1 | Vite + React + TS project shape, empty `manifest.json`, `prompt-rules.md`, `tokens/`, `components/`, `prototypes/`, `reference/` |
-| `figma-readiness-check` | Before extracting tokens | Punch list of Figma hygiene fixes (Variables, naming, auto-layout, variants, layer names) |
+| `figma-readiness-check` | Before extracting tokens | Punch list of Figma hygiene fixes + a separate "annotations to honor" pass that surfaces designer notes from description fields |
 | `figma-tokens-extract` | Once Figma is ready | `tokens/colors.css`, `tokens/spacing.css`, `tokens/typography.css` |
 | `codebase-conventions-scan` | After tokens | Markdown report answering the 8 conventions questions; drops into `prompt-rules.md` |
 
@@ -17,38 +17,47 @@ You don't invoke this file directly. It's a reference for which skill to reach f
 
 | Skill | When | What it produces |
 |---|---|---|
-| `component-from-figma` | Adding a new component | `Component.tsx` + `.css` + manifest entry + prompt-rules section + barrel export |
-| `verify-component` | After each component | Pass/fail report; catches missing wiring + hex codes |
+| `figma-batch-probe` | Before a batch of related components | One digest per node (variants, dimensions, variables, screenshot) — all probes in parallel |
+| `component-from-figma` | Adding a new component | `Component.tsx` + `.css` + schema-complete manifest entry + prompt-rules section + barrel export. Auto-chains `verify-component` and `showcase-page-generator`. |
+| `manifest-styling-from-css` | After editing a component's CSS | Updated `styling` + `colorMapping` blocks in `manifest.json`. Idempotent. |
+| `verify-component` | Mandatory final step of `component-from-figma` | 9-point pass/fail report (files, exports, manifest schema completeness, hex codes, undefined token refs, banned patterns) |
+| `showcase-page-generator` | Pairs with `component-from-figma` | `examples/<Name>Page.tsx` (or `src/pages/<Name>Page.tsx`) with variant + size + state matrices |
+| `screenshot-diff` | Before committing or opening a PR | Side-by-side Figma-vs-code diff. MCP-default (zero install) or precision mode (Playwright + pixelmatch). |
 | `next-component-to-build` | When unsure what to do next | Prioritized list with rationale |
 
 ## Tier 3 — Quality + prototype (when ready)
 
 | Skill | When | What it produces |
 |---|---|---|
-| `library-lint` | Periodically, pre-commit | File-line report of drift: hex codes, Tailwind, banned patterns |
+| `library-lint` | Periodically, pre-commit | File-line report of drift: hex codes, Tailwind, banned patterns, undefined `var(--name)` references |
+| `demo-compliance-scanner` | Before shipping a demo, pre-commit hook | Stricter report scoped to `prototypes/` + `demos/` + `examples/`. Raw HTML affordances are errors. |
+| `token-drift-check` | After Figma updates, before releases | Three-direction drift report (Figma→code, code→Figma, undefined refs) + designer annotations from Variable descriptions |
 | `prototype-from-brief` | Validating real flows | Working prototype HTML/TSX in `prototypes/`; stops if components are missing |
 
 ## Recommended sequence on a fresh project
 
 ```
 Day 1:
-  library-scaffold        # 5 min
-  figma-readiness-check   # 15 min (then ~hours fixing Figma)
+  library-scaffold         # 5 min
+  figma-readiness-check    # 15 min (then ~hours fixing Figma)
 
 Day 2:
-  figma-tokens-extract       # 10 min
-  codebase-conventions-scan  # 10 min
+  figma-tokens-extract        # 10 min
+  codebase-conventions-scan   # 10 min
   [manually fill in prompt-rules.md hard rules]
 
-Day 3:
-  component-from-figma Button   # ~15-30 min
-  verify-component Button       # 1 min
-  component-from-figma Input    # ~15 min
+Day 3+:
+  figma-batch-probe (for the next batch of nodes)
+  component-from-figma Button
+    └─ auto-chains: verify-component, showcase-page-generator
+  screenshot-diff Button         # confirm visual parity
   ...repeat
 
 Week 2:
   prototype-from-brief "settings page"
   library-lint
+  demo-compliance-scanner
+  token-drift-check
 ```
 
 ## How skills chain together
@@ -67,22 +76,30 @@ codebase-conventions-scan                 │
        │                                  │
        ▼                                  │
        │     ┌── next-component-to-build ─┘
+       │     │
        ▼     ▼
-   component-from-figma
+   figma-batch-probe          (optional: batch survey first)
        │
        ▼
-   verify-component
+   component-from-figma  ──────┐
+       │                       │  (auto-chained)
+       ├───► verify-component ─┤
+       ├───► showcase-page-generator
+       └───► manifest-styling-from-css   (re-run after CSS edits)
+       │
+       ▼
+   screenshot-diff
        │
        ▼
    (more components)
        │
        ▼
-prototype-from-brief ── library-lint
+prototype-from-brief ── library-lint ── demo-compliance-scanner ── token-drift-check
 ```
 
 ## Where these live
 
-All nine `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
+All fifteen `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
 
 To distribute to teammates: copy the folders to their `~/.claude/skills/`, or package as a plugin via the Anthropic plugin registry (use the `anthropic-skills:skill-creator` skill for that workflow).
 

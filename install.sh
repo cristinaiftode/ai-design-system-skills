@@ -25,10 +25,11 @@ SKILLS=(
   screenshot-diff
   next-component-to-build
 
-  # Tier 3 — Quality + prototyping
+  # Tier 3 — Quality + prototyping + maintenance
   library-lint
   demo-compliance-scanner
   token-drift-check
+  library-freshness-check
   figma-batch-probe
   prototype-from-brief
 )
@@ -65,4 +66,4 @@ echo
 echo "All done. Open a fresh Claude Code session and try:"
 echo "  \"List all skills available to me right now.\""
 echo
-echo "If you don't see the sixteen design-system skills, restart Claude Code."
+echo "If you don't see the seventeen design-system skills, restart Claude Code."

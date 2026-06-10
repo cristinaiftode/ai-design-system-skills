@@ -1,6 +1,6 @@
 # Design System Skills — Index
 
-Sixteen skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
+Seventeen skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
 
 You don't invoke this file directly. It's a reference for which skill to reach for at each phase.
 
@@ -33,6 +33,7 @@ You don't invoke this file directly. It's a reference for which skill to reach f
 | `library-lint` | Periodically, pre-commit | File-line report of drift: hex codes, Tailwind, banned patterns, undefined `var(--name)` references |
 | `demo-compliance-scanner` | Before shipping a demo, pre-commit hook | Stricter report scoped to `prototypes/` + `demos/` + `examples/`. Raw HTML affordances are errors. |
 | `token-drift-check` | After Figma updates, before releases | Three-direction drift report (Figma→code, code→Figma, undefined refs) + designer annotations from Variable descriptions |
+| `library-freshness-check` | Weekly maintenance check (pair with `schedule`) | Unified Figma-vs-code drift report across the whole library — 7 drift classes (new, stale, renamed, variant change, token value change, new annotation, deprecated) — with a Slack-pasteable summary for designers/PMs + engineer action list |
 | `prototype-from-brief` | Validating real flows | Working prototype HTML/TSX in `prototypes/`; stops if components are missing |
 
 ## Recommended sequence on a fresh project
@@ -97,11 +98,14 @@ codebase-conventions-scan                 │
        │
        ▼
 prototype-from-brief ── library-lint ── demo-compliance-scanner ── token-drift-check
+                                                                            │
+                                                                            ▼
+                                                            library-freshness-check (weekly)
 ```
 
 ## Where these live
 
-All sixteen `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
+All seventeen `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
 
 To distribute to teammates: copy the folders to their `~/.claude/skills/`, or package as a plugin via the Anthropic plugin registry (use the `anthropic-skills:skill-creator` skill for that workflow).
 

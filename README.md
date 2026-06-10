@@ -1,6 +1,6 @@
 # AI Design System Skills
 
-Sixteen [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
+Seventeen [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
 
 These skills follow the workflow in the [Designer's Playbook](https://github.com/cristinaiftode/tripletex-component-library/blob/main/DESIGNER-PLAYBOOK.md). Each one automates a phase of that workflow: from "empty folder" → "tokens extracted from Figma" → "components generated 1:1 from Figma matching your production code" → "linted prototype that uses only your library."
 
@@ -29,13 +29,14 @@ These skills follow the workflow in the [Designer's Playbook](https://github.com
 | **`screenshot-diff`** | Renders the live component, fetches the Figma export, and visually diffs them. Catches shape / spacing / icon mistakes that pass lint |
 | **`next-component-to-build`** | Looks at Figma vs. your manifest, recommends what to build next based on dependencies |
 
-### Tier 3 — Quality + prototyping (use from Week 2)
+### Tier 3 — Quality + prototyping + maintenance (use from Week 2 onward)
 
 | Skill | What it does |
 |---|---|
 | **`library-lint`** | Scans for off-brand drift (hex codes, Tailwind classes, banned patterns, undefined `var(--name)` references) |
 | **`demo-compliance-scanner`** | Strict lint for `prototypes/` + `demos/` + `examples/` — raw `<button>` / `<input>` are errors, not warnings. Pre-commit hook recipe included |
 | **`token-drift-check`** | Diffs `tokens/*.css` against the latest Figma Variables. Surfaces value changes, new variables, designer-authored annotations in description fields |
+| **`library-freshness-check`** | Weekly maintenance audit. Walks every page of the Figma file, compares against `manifest.json` + `tokens/*.css` + `prompt-rules.md`, produces a Slack-pasteable summary for designers/PMs plus an engineer action list. Covers seven drift classes (new in Figma, stale in code, renames, variant changes, token value changes, new annotations, deprecations) |
 | **`figma-batch-probe`** | Fans out `get_design_context` + `get_screenshot` + `get_variable_defs` + `get_metadata` across many Figma nodes in parallel. Turns a multi-node "what are these?" request from 30+ sequential calls into one round trip |
 | **`prototype-from-brief`** | Turns a natural-language brief into a real prototype using only existing components — refuses to invent missing ones |
 
@@ -53,7 +54,7 @@ git clone https://github.com/cristinaiftode/ai-design-system-skills.git /tmp/ai-
   rm -rf /tmp/ai-design-system-skills
 ```
 
-The script copies the sixteen skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
+The script copies the seventeen skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
 
 ### Option 2 — Manual install
 
@@ -82,7 +83,7 @@ After installing, open a fresh Claude Code session and ask:
 
 > *"List all skills available to me right now."*
 
-You should see the sixteen skills above. If any are missing, copy the folder again.
+You should see the seventeen skills above. If any are missing, copy the folder again.
 
 ---
 

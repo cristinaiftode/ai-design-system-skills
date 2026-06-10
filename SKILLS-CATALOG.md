@@ -2,7 +2,7 @@
 
 A human-readable reference for every skill in this pack — what it does, what it takes as input, what it produces, and the natural-English phrasings that trigger it.
 
-Sixteen skills total. This is the "what does each skill actually do" doc. For the **dependency diagram + recommended sequence**, see [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For the **install instructions**, see [`README.md`](./README.md). For the full **workflow recipes**, open the individual `skills/<name>/SKILL.md` files.
+Seventeen skills total. This is the "what does each skill actually do" doc. For the **dependency diagram + recommended sequence**, see [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For the **install instructions**, see [`README.md`](./README.md). For the full **workflow recipes**, open the individual `skills/<name>/SKILL.md` files.
 
 ---
 
@@ -161,7 +161,20 @@ Three-direction drift report between `tokens/*.css` and Figma Variables.
 - **Produces:** punch list with closest-match suggestions; offers to append missing Variables to the right token file
 - **Triggers:** *"check token drift"*, *"diff tokens against Figma"*, *"are my tokens stale"*, *"did designer change anything"*
 
-### 16. `prototype-from-brief`
+### 16. `library-freshness-check` 🆕
+
+The team-maintenance skill. Walks every page of the Figma file, snapshots the local library, and produces a unified drift report — what's behind, what's been renamed, what's deprecated, what's new — aimed at designers / PMs first, engineers second. Designed to run weekly.
+
+- **Inputs:** Figma file URL (auto-detected from `manifest.json → library.figmaFileKey` if present), `--detect-renames=conservative|heuristic` (default conservative), `--no-save` for terminal-only output
+- **Seven drift classes covered:** new in Figma not in code · stale in code gone in Figma · renamed (flagged for confirmation, never auto-applied) · variant added/removed · token value changed · annotation changed · deprecated still used
+- **Produces two outputs in one pass:**
+  - **Slack-pasteable summary** (top of report, always to terminal) — freshness score + one-line drift summary
+  - **Engineer action list** (full markdown, saved to `./library-freshness-report-YYYY-MM-DD.md`) — per-class detail with the exact skill / command to run for each fix
+- **Read-only by design:** never edits `manifest.json`, `tokens/*.css`, or `prompt-rules.md`. Acting on the report is your call (often by chaining to `component-from-figma` or `figma-tokens-extract`).
+- **Pairs with `schedule`** for automated weekly runs: `schedule "library-freshness-check" --cron "0 9 * * 1"`
+- **Triggers:** *"library freshness check"*, *"is our library up to date"*, *"what's behind in our library"*, *"audit library vs Figma"*, *"library sync status"*, *"did the designer add new components"*, *"weekly library health check"*, *"are we drifting from Figma"*
+
+### 17. `prototype-from-brief`
 
 Turns a natural-language brief into a real prototype using only existing library components. Refuses to invent missing ones.
 
@@ -192,7 +205,7 @@ library-scaffold
 
 ---
 
-## The 7 new skills in one line each
+## The 8 new skills in one line each
 
 | Skill | Closes which gap |
 |---|---|
@@ -203,6 +216,7 @@ library-scaffold
 | `screenshot-diff` | Tab-counter-as-chip / Modal phantom divider / wrong topnav shell (visual bugs that pass lint) |
 | `demo-compliance-scanner` | Raw `<button>` / `<input>` in demo pages that live for weeks before anyone notices |
 | `token-drift-check` | `--spacing-150` silent-evaluates-empty + designer annotations getting lost between Figma and code |
+| `library-freshness-check` | The prototyping library silently falling behind Figma between major sync passes — designers/PMs have no visibility into what's drifted until prototypes start looking wrong |
 
 ---
 

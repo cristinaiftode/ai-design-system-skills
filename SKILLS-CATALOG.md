@@ -2,7 +2,7 @@
 
 A human-readable reference for every skill in this pack — what it does, what it takes as input, what it produces, and the natural-English phrasings that trigger it.
 
-This is the "what does each skill actually do" doc. For the **dependency diagram + recommended sequence**, see [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For the **install instructions**, see [`README.md`](./README.md). For the full **workflow recipes**, open the individual `skills/<name>/SKILL.md` files.
+Sixteen skills total. This is the "what does each skill actually do" doc. For the **dependency diagram + recommended sequence**, see [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For the **install instructions**, see [`README.md`](./README.md). For the full **workflow recipes**, open the individual `skills/<name>/SKILL.md` files.
 
 ---
 
@@ -98,7 +98,18 @@ Generates `examples/<Name>Page.tsx` (or `src/pages/`, `stories/`, `docs/componen
 - **Produces:** TSX file with header, variant matrix, size matrix, state matrix, anatomy section, usage notes, "Don't" list — using only props/tokens already defined for the component
 - **Triggers:** *"generate a showcase for Tab"*, *"build the Modal examples page"*, *"create the ButtonPage"*
 
-### 10. `screenshot-diff` 🆕
+### 10. `component-interactive-behavior` 🆕
+
+Codifies the **interaction contract** per component category, audits whether a component implements it, and fills in what's missing. Works for both new components (auto-chained from `component-from-figma`) and existing ones (`--all` retrofit).
+
+- **Inputs:** component name (or `--all` for library-wide retrofit)
+- **Categories covered:** Disclosure (Accordion), Tooltip, Popover, Menu/Dropdown, Select/Combobox, Dialog/Modal, Tabs, Toast, Form input, Date/Calendar, Slider
+- **Audits:** required event handlers, ARIA attributes, keyboard navigation, focus management (trap + restore), state shape
+- **Fills:** the missing pieces using the project's existing utility hooks (`useFocusTrap`, `useClickOutside`, etc.) where they exist, or minimal inline equivalents where they don't — no new dependencies
+- **Updates the showcase** to demo the interactivity explicitly (e.g. "Press Escape to close", "Hover to see tooltip", "Arrow keys to navigate")
+- **Triggers:** *"make this component interactive"*, *"is the tooltip working"*, *"does the dropdown open"*, *"audit interactive behavior"*, *"wire up the modal"*, *"retrofit interactivity"*, *"check keyboard navigation"*, *"make the components actually work"*
+
+### 11. `screenshot-diff` 🆕
 
 Visual diff between live component and Figma export. Catches shape / spacing / icon mistakes that pass `verify-component`.
 
@@ -109,7 +120,7 @@ Visual diff between live component and Figma export. Catches shape / spacing / i
 - **Produces:** side-by-side report with per-region verdict (shape, color, spacing, iconography, composition) + recommended fix
 - **Triggers:** *"diff Modal against Figma"*, *"is this visually correct"*, *"does this match the design"*
 
-### 11. `next-component-to-build`
+### 12. `next-component-to-build`
 
 Diffs `manifest.json` against Figma; recommends what to build next.
 
@@ -121,7 +132,7 @@ Diffs `manifest.json` against Figma; recommends what to build next.
 
 ## Tier 3 — Quality + prototyping (Week 2+)
 
-### 12. `library-lint`
+### 13. `library-lint`
 
 Broad off-brand-drift scan across the whole library.
 
@@ -131,7 +142,7 @@ Broad off-brand-drift scan across the whole library.
 - **Produces:** punch list with file:line + suggested fixes; offers auto-fix for unambiguous cases
 - **Triggers:** *"lint the library"*, *"audit the library"*, *"is anything off-brand"*, *"design review the code"*, *"check for issues"*
 
-### 13. `demo-compliance-scanner` 🆕
+### 14. `demo-compliance-scanner` 🆕
 
 Strict, prototype/demo-scoped version of `library-lint`. Raw `<button>` / `<input>` / `<select>` / `<table>` / `<dialog>` are errors (not warnings).
 
@@ -140,7 +151,7 @@ Strict, prototype/demo-scoped version of `library-lint`. Raw `<button>` / `<inpu
 - **Suggests:** library-component swaps for each raw affordance (looks up the right import from `manifest.json`)
 - **Triggers:** *"scan the demos"*, *"audit the prototypes"*, *"are the demos clean"*, *"find raw HTML in prototypes"*
 
-### 14. `token-drift-check` 🆕
+### 15. `token-drift-check` 🆕
 
 Three-direction drift report between `tokens/*.css` and Figma Variables.
 
@@ -150,7 +161,7 @@ Three-direction drift report between `tokens/*.css` and Figma Variables.
 - **Produces:** punch list with closest-match suggestions; offers to append missing Variables to the right token file
 - **Triggers:** *"check token drift"*, *"diff tokens against Figma"*, *"are my tokens stale"*, *"did designer change anything"*
 
-### 15. `prototype-from-brief`
+### 16. `prototype-from-brief`
 
 Turns a natural-language brief into a real prototype using only existing library components. Refuses to invent missing ones.
 
@@ -172,6 +183,7 @@ library-scaffold
           → component-from-figma
               ├─ auto: verify-component
               ├─ auto: showcase-page-generator
+              ├─ auto: component-interactive-behavior (if interactive category)
               └─ later: manifest-styling-from-css (re-run after CSS edits)
             → screenshot-diff (visual gate)
               → (more components)
@@ -180,13 +192,14 @@ library-scaffold
 
 ---
 
-## The 6 new skills in one line each
+## The 7 new skills in one line each
 
 | Skill | Closes which gap |
 |---|---|
 | `figma-batch-probe` | 30+ sequential Figma calls on multi-node requests |
 | `manifest-styling-from-css` | 48/57 components shipped with no styling block; manifest drifts after every CSS edit |
 | `showcase-page-generator` | Components built without a matching showcase page |
+| `component-interactive-behavior` | Tooltip doesn't appear on hover / Dropdown doesn't open on click / Modal doesn't trap focus — components that look right and don't work |
 | `screenshot-diff` | Tab-counter-as-chip / Modal phantom divider / wrong topnav shell (visual bugs that pass lint) |
 | `demo-compliance-scanner` | Raw `<button>` / `<input>` in demo pages that live for weeks before anyone notices |
 | `token-drift-check` | `--spacing-150` silent-evaluates-empty + designer annotations getting lost between Figma and code |

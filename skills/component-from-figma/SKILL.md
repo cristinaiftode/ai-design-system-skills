@@ -1,6 +1,6 @@
 ---
 name: component-from-figma
-description: Build a new component for an AI-readable component library end-to-end from a Figma node, matching production code conventions. Reads `manifest.json`, `prompt-rules.md`, `tokens/*.css`, and `reference/` files, fetches the Figma design context, generates `Component.tsx` + `Component.css`, updates the barrel export, adds the manifest entry (with the full `styling` + `colorMapping` blocks the project's schema requires — never partial), writes a per-component section into `prompt-rules.md`, then automatically chains `verify-component` and (if a showcase folder exists) `showcase-page-generator` so the component ships end-to-end in one invocation. Use when adding a component to a library you're bootstrapping with the designer playbook, when porting a component from Figma to code, or whenever the user asks to "build the [Component] component", "generate [Component] from Figma", "add a new component", "port this Figma node to React", "wrap this Figma node as a React component", "create a component", or "build this from Figma". Requires the Figma MCP server.
+description: Build a new component for an AI-readable component library end-to-end from a Figma node, matching production code conventions. Reads `manifest.json`, `prompt-rules.md`, `tokens/*.css`, and `reference/` files, fetches the Figma design context, generates `Component.tsx` + `Component.css`, updates the barrel export, adds the manifest entry (with the full `styling` + `colorMapping` blocks the project's schema requires — never partial), writes a per-component section into `prompt-rules.md`, then automatically chains `verify-component`, `showcase-page-generator` (if a showcase folder exists), and `component-interactive-behavior` (if the component is in an interactive category like Tooltip / Dropdown / Modal / Tabs) so the component ships visually correct, structurally complete, AND functionally working in one invocation. Use when adding a component to a library you're bootstrapping with the designer playbook, when porting a component from Figma to code, or whenever the user asks to "build the [Component] component", "generate [Component] from Figma", "add a new component", "port this Figma node to React", "wrap this Figma node as a React component", "create a component", or "build this from Figma". Requires the Figma MCP server.
 trigger: [build the component, generate component from figma, add a new component, port this figma node, create component from figma, build component from figma node, wrap this figma node, create a component, build this from figma]
 license: Apache-2.0
 ---
@@ -174,7 +174,19 @@ Check for a showcase folder in this order: `examples/`, `src/pages/`, `stories/`
 
 If no showcase folder exists, skip silently — don't prompt.
 
-### Step 10: Report and suggest next step
+### Step 10: Wire interactive behavior (if applicable)
+
+Check whether the new component is in a known interactive category — Disclosure, Tooltip, Popover, Menu / Dropdown, Select / Combobox, Dialog / Modal, Tabs, Toast, Form input, Date / Calendar, Slider. Detection rules (apply in order):
+
+1. **Exact name match** (e.g. `Modal` → Dialog category)
+2. **Name suffix match** (e.g. `FilterDialog` → Dialog because it ends in `Dialog`)
+3. **Props heuristic** — if the manifest props include `onOpen` / `onClose` / `isOpen`, treat as overlay; if `value` / `onChange` + an enum, treat as Select-like
+
+If the component matches, **invoke `component-interactive-behavior <ComponentName>`** to wire up the handlers, ARIA attributes, keyboard navigation, and focus management. Same auto-chain pattern as `verify-component` and `showcase-page-generator`.
+
+If the component is purely visual (Tag, Badge, Avatar, Spinner, Divider, MediaPlaceholder) or a layout primitive (AppShell, Sidebar, Card, PageHeader), skip silently.
+
+### Step 11: Report and suggest next step
 
 Print a summary:
 - Files created / modified
@@ -204,3 +216,4 @@ Plus a summary report to the user.
 - **Shipping a partial manifest entry.** Filling `styling.dimensions` and skipping `colorMapping` because the project's schema reference had it but it felt redundant. The schema reference is the contract. If a component doesn't have a `colorMapping` (because it has only one visual variant), say so explicitly (`"colorMapping": null` with a comment, or omit *and* note the omission in `notes`). Never silently drop a key.
 - **Skipping the verify step "because it looked right."** This is the failure mode that caused the entire wave of bugs that motivated `verify-component` becoming mandatory. Don't.
 - **Skipping the showcase step.** A component without a showcase page is half-built — there's no canonical place to see it. If the project has a showcase folder, always chain `showcase-page-generator`.
+- **Skipping the interactive-behavior step.** A Tooltip that doesn't appear on hover, a Dropdown that doesn't open on click, a Modal that doesn't trap focus or close on Escape — these are components that *look* right and *don't work*. They pass `verify-component` and `screenshot-diff` and still fail the moment a user touches them. If the component is in an interactive category, always chain `component-interactive-behavior`.

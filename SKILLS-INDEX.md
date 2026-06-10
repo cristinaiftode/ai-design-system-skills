@@ -1,6 +1,6 @@
 # Design System Skills — Index
 
-Fifteen skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
+Sixteen skills for bootstrapping and maintaining AI-readable component libraries. They follow the conventions in `DESIGNER-PLAYBOOK.md`.
 
 You don't invoke this file directly. It's a reference for which skill to reach for at each phase.
 
@@ -22,6 +22,7 @@ You don't invoke this file directly. It's a reference for which skill to reach f
 | `manifest-styling-from-css` | After editing a component's CSS | Updated `styling` + `colorMapping` blocks in `manifest.json`. Idempotent. |
 | `verify-component` | Mandatory final step of `component-from-figma` | 9-point pass/fail report (files, exports, manifest schema completeness, hex codes, undefined token refs, banned patterns) |
 | `showcase-page-generator` | Pairs with `component-from-figma` | `examples/<Name>Page.tsx` (or `src/pages/<Name>Page.tsx`) with variant + size + state matrices |
+| `component-interactive-behavior` | Pairs with `component-from-figma` (auto-chained for interactive categories) | Audited or filled interaction contract — handlers, ARIA, keyboard navigation, focus management. Safe to retrofit. |
 | `screenshot-diff` | Before committing or opening a PR | Side-by-side Figma-vs-code diff. MCP-default (zero install) or precision mode (Playwright + pixelmatch). |
 | `next-component-to-build` | When unsure what to do next | Prioritized list with rationale |
 
@@ -85,6 +86,7 @@ codebase-conventions-scan                 │
        │                       │  (auto-chained)
        ├───► verify-component ─┤
        ├───► showcase-page-generator
+       ├───► component-interactive-behavior  (if interactive category)
        └───► manifest-styling-from-css   (re-run after CSS edits)
        │
        ▼
@@ -99,7 +101,7 @@ prototype-from-brief ── library-lint ── demo-compliance-scanner ── t
 
 ## Where these live
 
-All fifteen `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
+All sixteen `SKILL.md` files are at `~/.claude/skills/[skill-name]/SKILL.md`. They're user-level, so they work across every Claude Code project on this machine.
 
 To distribute to teammates: copy the folders to their `~/.claude/skills/`, or package as a plugin via the Anthropic plugin registry (use the `anthropic-skills:skill-creator` skill for that workflow).
 

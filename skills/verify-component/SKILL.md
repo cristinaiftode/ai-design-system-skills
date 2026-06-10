@@ -1,6 +1,6 @@
 ---
 name: verify-component
-description: Verify a single component in an AI-readable component library is fully wired up — TSX file exists, CSS file exists, barrel export updated, manifest entry present AND schema-complete (every key the project's most-populated entry has, this one has too), prompt-rules section present, no hardcoded hex codes, no banned patterns, every `var(--name)` reference in the component CSS resolves to a token actually defined in `tokens/*.css` (catches the `var(--spacing-150)` silent-evaluates-to-empty bug). Returns a pass/fail report. **Mandatory final step of `component-from-figma`** — never skipped. Also use after manually editing a component, before merging a PR that touches a component, or whenever the user asks to "verify the [Component]", "check that [Component] is fully wired", "validate this component", "is [Component] correct", "audit this component", or "did the component finish properly".
+description: Verify a single component in an AI-readable component library is fully wired up — TSX file exists, CSS file exists, barrel export updated, manifest entry present AND schema-complete (every key the project's most-populated entry has, this one has too), prompt-rules section present, no hardcoded hex codes, no banned patterns, every `var(--name)` reference in the component CSS resolves to a token actually defined in `tokens/*.css` (catches the `var(--spacing-150)` silent-evaluates-to-empty bug), AND — for components in interactive categories (Tooltip / Dropdown / Modal / Tabs / Toast / etc.) — the expected interaction contract is implemented (handlers, ARIA, keyboard support). Returns a pass/fail report. **Mandatory final step of `component-from-figma`** — never skipped. Also use after manually editing a component, before merging a PR that touches a component, or whenever the user asks to "verify the [Component]", "check that [Component] is fully wired", "validate this component", "is [Component] correct", "audit this component", or "did the component finish properly".
 trigger: [verify component, check the component is wired, validate component, is the component fully integrated, audit component, is the component correct, did the component finish properly]
 license: Apache-2.0
 ---
@@ -24,7 +24,7 @@ Confirm a single component has everything it needs to be considered "done" in an
 
 Argument is required. PascalCase (e.g., `Button`, `DateRangePicker`). If not provided, ask.
 
-### 2. Run the nine checks
+### 2. Run the ten checks
 
 For component named `Foo`:
 
@@ -39,35 +39,38 @@ For component named `Foo`:
 | 7 | No hardcoded hex codes | `grep '#[0-9a-fA-F]\{3,6\}'` on `Foo.css` returns zero matches (excluding comments) |
 | 8 | **All `var(--name)` references resolve** | Build the set of defined CSS variables from `tokens/*.css` (`:root { --name: value }` declarations). Grep `var\(--[a-z0-9-]+\)` in `Foo.css` and `Foo.tsx`. Every reference must exist in the set. This catches the `var(--spacing-150)` / `var(--spacing-250)` class of bug where a typo silently evaluates to empty. |
 | 9 | No banned patterns | Read banned-patterns list from `prompt-rules.md` and grep `Foo.tsx` + `Foo.css` against each |
+| 10 | **Interactive contract satisfied** (if applicable) | Detect the component's category from its name and manifest props (see `component-interactive-behavior` for the category table). If the component is in an interactive category (Tooltip / Popover / Menu / Dropdown / Select / Modal / Tabs / Toast / Form input / Date / Slider), confirm the TSX includes the required handlers (`onClick`, `onMouseEnter`/`onFocus`, `onKeyDown`), state, and ARIA attributes for that category. If the component is purely visual (Tag, Badge, Avatar, Divider, Spinner, AppShell, Sidebar, Card), skip this check with a "no interactive contract needed" note. |
 
 ### 3. Output
 
 Print a compact pass/fail table:
 
 ```
-# Verify Foo
+# Verify Modal
 
-✅ 1. components/Foo.tsx exists (42 lines)
-✅ 2. components/Foo.css exists (88 lines)
+✅ 1. components/Modal.tsx exists (88 lines)
+✅ 2. components/Modal.css exists (142 lines)
 ✅ 3. Barrel export present in components/index.ts:24
-✅ 4. Manifest entry present (props: variant, size, onClick)
-❌ 5. Manifest entry incomplete — missing `colorMapping`, `styling.focusRing`. Schema reference (Button) has these. Run `manifest-styling-from-css Foo` to derive from the CSS, or fill manually.
-✅ 6. Prompt-rules section present at Section 6.12
-❌ 7. Hex code found: components/Foo.css:33 — `color: #0a41fa;` (use `var(--text-action)`)
-❌ 8. Undefined token referenced: components/Foo.css:88 — `padding: var(--spacing-150)`. Closest defined: `--spacing-16` (16px), `--spacing-12` (12px).
+✅ 4. Manifest entry present (props: isOpen, onClose, title, children)
+❌ 5. Manifest entry incomplete — missing `colorMapping`, `styling.focusRing`. Schema reference (Button) has these. Run `manifest-styling-from-css Modal` to derive from the CSS, or fill manually.
+✅ 6. Prompt-rules section present at Section 6.18
+❌ 7. Hex code found: components/Modal.css:33 — `color: #0a41fa;` (use `var(--text-action)`)
+❌ 8. Undefined token referenced: components/Modal.css:88 — `padding: var(--spacing-150)`. Closest defined: `--spacing-16` (16px), `--spacing-12` (12px).
 ✅ 9. No banned patterns detected
+❌ 10. Interactive contract incomplete — Modal is in the Dialog category. Missing: focus trap (Tab can escape the dialog), Escape-to-close (no onKeyDown handler), restore-focus-on-close (no previouslyFocusedElement ref), aria-labelledby (title not linked to dialog). Run `component-interactive-behavior Modal` to wire these up.
 
-Result: 6/9 PASSED. 3 issues to fix.
+Result: 6/10 PASSED. 4 issues to fix.
 
 To fix:
-1. Replace `#0a41fa` on Foo.css:33 with `var(--text-action)`.
-2. Replace `var(--spacing-150)` on Foo.css:88 with `var(--spacing-16)` (or whichever the design intends).
-3. Run `manifest-styling-from-css Foo` to fill the missing manifest sub-blocks from the CSS.
+1. Replace `#0a41fa` on Modal.css:33 with `var(--text-action)`.
+2. Replace `var(--spacing-150)` on Modal.css:88 with `var(--spacing-16)` (or whichever the design intends).
+3. Run `manifest-styling-from-css Modal` to fill the missing manifest sub-blocks from the CSS.
+4. Run `component-interactive-behavior Modal` to wire the Dialog interaction contract.
 ```
 
 ### 4. Optional: offer to fix
 
-For unambiguous fixes — hex codes where exactly one token maps to that hex, or `manifest-styling-from-css` for missing styling blocks — offer to apply. For undefined tokens, suggest the closest defined match but require user confirmation before editing.
+For unambiguous fixes — hex codes where exactly one token maps to that hex, or `manifest-styling-from-css` for missing styling blocks, or `component-interactive-behavior` for the interactive contract — offer to apply (or chain the relevant skill). For undefined tokens, suggest the closest defined match but require user confirmation before editing.
 
 ## Output
 

@@ -1,6 +1,6 @@
 # AI Design System Skills
 
-Fifteen [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
+Sixteen [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
 
 These skills follow the workflow in the [Designer's Playbook](https://github.com/cristinaiftode/tripletex-component-library/blob/main/DESIGNER-PLAYBOOK.md). Each one automates a phase of that workflow: from "empty folder" → "tokens extracted from Figma" → "components generated 1:1 from Figma matching your production code" → "linted prototype that uses only your library."
 
@@ -25,6 +25,7 @@ These skills follow the workflow in the [Designer's Playbook](https://github.com
 | **`manifest-styling-from-css`** | Reads `components/X.css` and writes the `styling` + `colorMapping` blocks to `manifest.json`. Idempotent — re-run after CSS edits to keep manifest in sync |
 | **`verify-component`** | 9-point pass/fail check: files + exports + manifest schema completeness + no hex codes + every `var(--name)` resolves + no banned patterns |
 | **`showcase-page-generator`** | Generates `examples/<Name>Page.tsx` (or `src/pages/`) for a component, mirroring the project's existing showcase template |
+| **`component-interactive-behavior`** | Audits and fills the interaction contract per category — Tooltip on hover, Dropdown on click + arrow keys, Modal focus trap + escape, Tabs arrow navigation. Auto-chained from `component-from-figma`; safe to retrofit across an existing library |
 | **`screenshot-diff`** | Renders the live component, fetches the Figma export, and visually diffs them. Catches shape / spacing / icon mistakes that pass lint |
 | **`next-component-to-build`** | Looks at Figma vs. your manifest, recommends what to build next based on dependencies |
 
@@ -52,7 +53,7 @@ git clone https://github.com/cristinaiftode/ai-design-system-skills.git /tmp/ai-
   rm -rf /tmp/ai-design-system-skills
 ```
 
-The script copies the fifteen skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
+The script copies the sixteen skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
 
 ### Option 2 — Manual install
 
@@ -81,7 +82,7 @@ After installing, open a fresh Claude Code session and ask:
 
 > *"List all skills available to me right now."*
 
-You should see the fifteen skills above. If any are missing, copy the folder again.
+You should see the sixteen skills above. If any are missing, copy the folder again.
 
 ---
 

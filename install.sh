@@ -21,6 +21,7 @@ SKILLS=(
   manifest-styling-from-css
   verify-component
   showcase-page-generator
+  component-interactive-behavior
   screenshot-diff
   next-component-to-build
 
@@ -64,4 +65,4 @@ echo
 echo "All done. Open a fresh Claude Code session and try:"
 echo "  \"List all skills available to me right now.\""
 echo
-echo "If you don't see the fifteen design-system skills, restart Claude Code."
+echo "If you don't see the sixteen design-system skills, restart Claude Code."

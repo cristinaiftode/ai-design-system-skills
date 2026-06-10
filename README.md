@@ -38,7 +38,7 @@ These skills follow the workflow in the [Designer's Playbook](https://github.com
 | **`figma-batch-probe`** | Fans out `get_design_context` + `get_screenshot` + `get_variable_defs` + `get_metadata` across many Figma nodes in parallel. Turns a multi-node "what are these?" request from 30+ sequential calls into one round trip |
 | **`prototype-from-brief`** | Turns a natural-language brief into a real prototype using only existing components — refuses to invent missing ones |
 
-A more detailed reference with the dependency diagram is in [`SKILLS-INDEX.md`](./SKILLS-INDEX.md).
+A more detailed reference with the dependency diagram is in [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For a per-skill catalog (inputs, outputs, trigger phrases for each of the 15), see [`SKILLS-CATALOG.md`](./SKILLS-CATALOG.md).
 
 ---
 

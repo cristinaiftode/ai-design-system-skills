@@ -1,6 +1,6 @@
 # AI Design System Skills
 
-Nine [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
+Seventeen [Claude Code](https://claude.com/claude-code) skills for bootstrapping and maintaining AI-readable component libraries — the kind that Claude, v0, Lovable, Figma Make, and friends all understand without you having to re-explain your design system on every prompt.
 
 These skills follow the workflow in the [Designer's Playbook](https://github.com/cristinaiftode/tripletex-component-library/blob/main/DESIGNER-PLAYBOOK.md). Each one automates a phase of that workflow: from "empty folder" → "tokens extracted from Figma" → "components generated 1:1 from Figma matching your production code" → "linted prototype that uses only your library."
 
@@ -21,18 +21,26 @@ These skills follow the workflow in the [Designer's Playbook](https://github.com
 
 | Skill | What it does |
 |---|---|
-| **`component-from-figma`** | Builds a complete component end-to-end: TSX + CSS + manifest entry + prompt-rules section + barrel export |
-| **`verify-component`** | 7-point pass/fail check that a component is fully wired up + free of token violations |
+| **`component-from-figma`** | Builds a complete component end-to-end: TSX + CSS + manifest entry (schema-complete) + prompt-rules section + barrel export, then auto-chains `verify-component` and `showcase-page-generator` |
+| **`manifest-styling-from-css`** | Reads `components/X.css` and writes the `styling` + `colorMapping` blocks to `manifest.json`. Idempotent — re-run after CSS edits to keep manifest in sync |
+| **`verify-component`** | 9-point pass/fail check: files + exports + manifest schema completeness + no hex codes + every `var(--name)` resolves + no banned patterns |
+| **`showcase-page-generator`** | Generates `examples/<Name>Page.tsx` (or `src/pages/`) for a component, mirroring the project's existing showcase template |
+| **`component-interactive-behavior`** | Audits and fills the interaction contract per category — Tooltip on hover, Dropdown on click + arrow keys, Modal focus trap + escape, Tabs arrow navigation. Auto-chained from `component-from-figma`; safe to retrofit across an existing library |
+| **`screenshot-diff`** | Renders the live component, fetches the Figma export, and visually diffs them. Catches shape / spacing / icon mistakes that pass lint |
 | **`next-component-to-build`** | Looks at Figma vs. your manifest, recommends what to build next based on dependencies |
 
-### Tier 3 — Quality + prototyping (use from Week 2)
+### Tier 3 — Quality + prototyping + maintenance (use from Week 2 onward)
 
 | Skill | What it does |
 |---|---|
-| **`library-lint`** | Scans for off-brand drift (hex codes, Tailwind classes, banned patterns) |
+| **`library-lint`** | Scans for off-brand drift (hex codes, Tailwind classes, banned patterns, undefined `var(--name)` references) |
+| **`demo-compliance-scanner`** | Strict lint for `prototypes/` + `demos/` + `examples/` — raw `<button>` / `<input>` are errors, not warnings. Pre-commit hook recipe included |
+| **`token-drift-check`** | Diffs `tokens/*.css` against the latest Figma Variables. Surfaces value changes, new variables, designer-authored annotations in description fields |
+| **`library-freshness-check`** | Weekly maintenance audit. Walks every page of the Figma file, compares against `manifest.json` + `tokens/*.css` + `prompt-rules.md`, produces a Slack-pasteable summary for designers/PMs plus an engineer action list. Covers seven drift classes (new in Figma, stale in code, renames, variant changes, token value changes, new annotations, deprecations) |
+| **`figma-batch-probe`** | Fans out `get_design_context` + `get_screenshot` + `get_variable_defs` + `get_metadata` across many Figma nodes in parallel. Turns a multi-node "what are these?" request from 30+ sequential calls into one round trip |
 | **`prototype-from-brief`** | Turns a natural-language brief into a real prototype using only existing components — refuses to invent missing ones |
 
-A more detailed reference with the dependency diagram is in [`SKILLS-INDEX.md`](./SKILLS-INDEX.md).
+A more detailed reference with the dependency diagram is in [`SKILLS-INDEX.md`](./SKILLS-INDEX.md). For a per-skill catalog (inputs, outputs, trigger phrases for each of the 15), see [`SKILLS-CATALOG.md`](./SKILLS-CATALOG.md).
 
 ---
 
@@ -46,7 +54,7 @@ git clone https://github.com/cristinaiftode/ai-design-system-skills.git /tmp/ai-
   rm -rf /tmp/ai-design-system-skills
 ```
 
-The script copies the nine skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
+The script copies the seventeen skill folders into `~/.claude/skills/` and prints a checklist of what was installed.
 
 ### Option 2 — Manual install
 
@@ -75,7 +83,7 @@ After installing, open a fresh Claude Code session and ask:
 
 > *"List all skills available to me right now."*
 
-You should see the nine skills above. If any are missing, copy the folder again.
+You should see the seventeen skills above. If any are missing, copy the folder again.
 
 ---
 

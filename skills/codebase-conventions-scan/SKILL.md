@@ -1,7 +1,7 @@
 ---
 name: codebase-conventions-scan
 description: Analyze a production codebase (local path or GitHub URL) to detect framework, styling approach, class-naming convention, file structure, type system, import style, icon strategy, and any banned patterns. Produces a markdown report that drops directly into `prompt-rules.md` for a new AI-readable component library. Use when bootstrapping a component library from an existing product, when documenting conventions for the first time, or whenever the user asks to "analyze our production code", "detect our code conventions", "scan our codebase for conventions", "answer the 8 conventions questions", or "extract style rules from our app".
-trigger: [analyze our production code, detect our code conventions, scan our codebase, answer the 8 conventions questions, extract style rules, document our conventions, what conventions does our codebase use]
+trigger: [analyze our production code, detect our code conventions, scan our codebase, answer the 8 conventions questions, extract style rules, document our conventions, what conventions does our codebase use, how do we write code, whats our style, generate prompt rules from production]
 license: Apache-2.0
 ---
 

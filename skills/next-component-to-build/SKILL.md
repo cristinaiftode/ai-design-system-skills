@@ -1,7 +1,7 @@
 ---
 name: next-component-to-build
 description: Recommend which component(s) to build next in an AI-readable component library, based on what's already in `manifest.json` and what exists in the Figma file. Prioritizes by foundational dependencies (Button before Form, Input before Modal), coverage gaps, and the user's stated focus (forms, data display, navigation, feedback). Use when planning a sprint of component work, when uncertain what to build next, or whenever the user asks "what should I build next", "which component is next", "what's missing from my library", or "prioritize my component backlog".
-trigger: [what should i build next, which component is next, whats missing from my library, prioritize my component backlog, what to build next]
+trigger: [what should i build next, which component is next, whats missing from my library, prioritize my component backlog, what to build next, plan my sprint, recommend next components, what to do next on the library]
 license: Apache-2.0
 ---
 

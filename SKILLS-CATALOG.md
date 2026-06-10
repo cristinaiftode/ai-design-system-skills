@@ -61,7 +61,7 @@ The headline skill. Builds a component end-to-end from a Figma node.
 
 - **Inputs:** PascalCase component name + Figma node URL + (optional) reference files
 - **Produces:** `Component.tsx` + `Component.css` + barrel export update + **schema-complete** manifest entry (every key the project's most-populated entry has) + prompt-rules section
-- **Auto-chains:** `verify-component` (mandatory final step) and `showcase-page-generator` (if a showcase folder exists)
+- **Auto-chains:** `verify-component` (mandatory final step), `showcase-page-generator` (if a showcase folder exists), and `component-interactive-behavior` (if the component is in an interactive category like Tooltip / Dropdown / Modal / Tabs)
 - **Triggers:** *"build the Button component"*, *"generate this from Figma"*, *"port this Figma node"*, *"wrap this Figma node"*
 
 ### 7. `manifest-styling-from-css` 🆕
@@ -75,7 +75,7 @@ Reads a component's CSS and emits the `styling` + `colorMapping` blocks in `mani
 
 ### 8. `verify-component`
 
-Mandatory final gate after every component build. Nine checks:
+Mandatory final gate after every component build. Ten checks:
 
 1. TSX file exists
 2. CSS file exists
@@ -86,6 +86,7 @@ Mandatory final gate after every component build. Nine checks:
 7. No hardcoded hex codes
 8. **Every `var(--name)` reference resolves to a defined token** (catches `--spacing-150` silent-evaluates-empty)
 9. No banned patterns
+10. **Interactive contract satisfied** (if the component is in an interactive category — handlers + ARIA + keyboard support match the contract from `component-interactive-behavior`)
 
 - **Produces:** compact pass/fail table with line numbers for failures
 - **Triggers:** *"verify Modal"*, *"is the component correct"*, *"did the component finish properly"*
@@ -130,7 +131,7 @@ Diffs `manifest.json` against Figma; recommends what to build next.
 
 ---
 
-## Tier 3 — Quality + prototyping (Week 2+)
+## Tier 3 — Quality + prototyping + maintenance (Week 2 onward)
 
 ### 13. `library-lint`
 
@@ -201,6 +202,9 @@ library-scaffold
             → screenshot-diff (visual gate)
               → (more components)
                 → prototype-from-brief → library-lint → demo-compliance-scanner → token-drift-check
+                                                                                         │
+                                                                                         ▼
+                                                                       library-freshness-check  (weekly maintenance)
 ```
 
 ---
